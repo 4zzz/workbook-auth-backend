@@ -65,8 +65,8 @@ if (config.useHttp) {
 
 if (config.useHttps) {
   try {
-    var privateKey  = fs.readFileSync('./server.key', 'utf8');
-    var certificate = fs.readFileSync('./server.crt', 'utf8');
+    var privateKey  = fs.readFileSync(config.https.key, 'utf8');
+    var certificate = fs.readFileSync(config.https.cert, 'utf8');
     var credentials = {key: privateKey, cert: certificate};
   } catch (e) {
     console.error('Failed to load private key file or certificate file');
