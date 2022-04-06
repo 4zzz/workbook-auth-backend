@@ -3,14 +3,14 @@
         "clientId": "",
         "clientSecret": ""
     },
-    "redirectUrl": {
-        "success": "http://localhost:3000/logged_in",
-        "fail": "http://localhost:3000/login_failed"
+    "frontend": {
+        "hostname": "http://localhost:3000",
+        "failRedirect": "http://localhost:3000/login_failed"
     },
     "useHttp": true,
     "useHttps": false,
     "http": {
-        "port": 8080
+        "port": 4000
     },
     "https": {
         "port": 8443,

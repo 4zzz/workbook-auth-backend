@@ -32,7 +32,7 @@ function getLogPrefix(req) {
 }
 
 app.get('/get_access_token', async (req, res) => {
-  const { code } = req.query;
+  const { code, redirect } = req.query;
   if (!code) {
     console.log(`${getLogPrefix(req)}: Invalid request. (Missing code parameter)`);
     res.sendStatus(418);
@@ -40,12 +40,12 @@ app.get('/get_access_token', async (req, res) => {
     try {
       const token = await getAccessToken(code);
       res.cookie('github_access_token', token);
-      res.redirect(config.redirectUrl.success);
+      res.redirect(`${config.frontend.hostname}${redirect ? redirect : ''}`);
       console.log(`${getLogPrefix(req)}: Authorization successful.`);
     } catch(e) {
       const cause = e.cause ? ` (${e.cause})` : '';
       console.log(`${getLogPrefix(req)}: Authorization failed. ${e.message}.${cause}`)
-      res.redirect(config.redirectUrl.fail);
+      res.redirect(config.frontend.failRedirect);
     }
   }
 })
