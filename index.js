@@ -6,6 +6,7 @@ const express = require('express');
 const config = require('./config.json');
 
 const app = express();
+const basePath = config.basePath.endsWith('/') ? config.basePath.slice(0, -1) : config.basePath;
 
 async function getAccessToken(code) {
   const { clientId, clientSecret } = config.githubApi;
@@ -31,7 +32,7 @@ function getLogPrefix(req) {
   return `${req.ip} ${req.method} ${req.path} ${JSON.stringify(req.query)}`;
 }
 
-app.get('/get_access_token', async (req, res) => {
+app.get(`${basePath}/get_access_token`, async (req, res) => {
   const { code, redirect } = req.query;
   if (!code) {
     console.log(`${getLogPrefix(req)}: Invalid request. (Missing code parameter)`);
@@ -51,7 +52,7 @@ app.get('/get_access_token', async (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  console.log(`${getLogPrefix(req)}: Invalid request.`)
+  console.log(`${getLogPrefix(req)}: Invalid request. (Unknown path)`)
   res.sendStatus(418);
 });
 

@@ -7,6 +7,7 @@
         "hostname": "http://localhost:3000",
         "failRedirect": "http://localhost:3000/login_failed"
     },
+    "basePath": "",
     "useHttp": true,
     "useHttps": false,
     "http": {
