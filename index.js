@@ -1,6 +1,4 @@
-const fs = require('fs');
 const http = require('http');
-const https = require('https');
 const axios = require('axios');
 const express = require('express');
 
@@ -23,9 +21,7 @@ config = {
     clientSecret: envOrDef('CLIENT_SECRET'),
   },
   frontend: {
-    domain: envOrDef('FRONTEND_DOMAIN'),
     origin: envOrDef('FRONTEND_ORIGIN'),
-    failRedirect: envOrDef('FRONTEND_FAIL_REDIRECT')
   },
 }
 
@@ -55,19 +51,19 @@ function getLogPrefix(req) {
 
 app.get(`${config.basePath}/get_access_token`, async (req, res) => {
   const { code, redirect } = req.query;
+  res.setHeader('Access-Control-Allow-Origin', config.frontend.origin);
   if (!code) {
     console.log(`${getLogPrefix(req)}: Invalid request. (Missing code parameter)`);
     res.sendStatus(418);
   } else {
     try {
-      const token = await getAccessToken(code);
-      res.cookie('github_access_token', token, {domain: config.frontend.domain, path: '/workbook', sameSite: 'None'});
-      res.redirect(`${config.frontend.origin}${redirect ? redirect : ''}`);
-      console.log(`${getLogPrefix(req)}: Authorization successful.`);
+      const accessToken = await getAccessToken(code);
+      res.send(JSON.stringify({accessToken}));
+      console.log(`${getLogPrefix(req)}: Authentication successful.`);
     } catch(e) {
       const cause = e.cause ? ` (${e.cause})` : '';
-      console.log(`${getLogPrefix(req)}: Authorization failed. ${e.message}.${cause}`)
-      res.redirect(config.frontend.failRedirect);
+      console.log(`${getLogPrefix(req)}: Authentication failed. ${e.message}.${cause}`)
+      res.send(JSON.stringify({error: 'Authentication failed'}));
     }
   }
 })
